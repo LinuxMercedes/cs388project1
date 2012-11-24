@@ -10,8 +10,8 @@ Binary multiplicative_division(const Binary& a, const Binary& b, unsigned int& c
 	b_i_complement = b_i;
 	b_i_complement.complement();
 	f_i = add(b_i_complement, ONE);
-	a_i = a_i * f_i;
-	b_i = b_i * f_i;
+	a_i = mul(a_i, f_i);
+	b_i = mul(b_i, f_i);
   }
 
   return a_i;
