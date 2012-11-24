@@ -5,6 +5,7 @@
 #include <string.h>
 
 static unsigned int ZERO = 0; // Allow optional pass-by-reference parameters
+static unsigned int ONE = 1; // Allow optional pass-by-reference parameters
 
 class Binary {
   public:
