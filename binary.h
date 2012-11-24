@@ -3,6 +3,8 @@
 
 #include <cmath>
 #include <string.h>
+#include <algorithm>
+#include <sstream>
 
 static unsigned int ZERO = 0; // Allow optional pass-by-reference parameters
 
@@ -55,6 +57,7 @@ class Binary {
       cost += size;
     }
 
+    /* Deprecated */
     int int_val() {
       int value = 0;
 
@@ -72,6 +75,19 @@ class Binary {
       return value;
     }
 
+    const char* char_val() {
+      stringstream str;
+      for(int i = size - 1; i >= 0; i--) {
+        if(decimal == i + 1) {
+          str << '.';
+        }
+        str << number[i];
+      }
+
+      return str.str().c_str(); //yuck
+    }
+
+    /* Deprecated */
     unsigned int bin_val() {
       unsigned int value = 0;
       for(unsigned int i = 0; i < size; i++) {
