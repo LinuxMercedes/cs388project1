@@ -6,7 +6,9 @@
 #include <algorithm>
 #include <sstream>
 
-static unsigned int ZERO = 0; // Allow optional pass-by-reference parameters
+static unsigned int ZERO = 0; // Only use for optional pass-by-reference parameters
+
+using namespace std;
 
 class Binary {
   public:
