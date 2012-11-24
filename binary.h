@@ -8,19 +8,27 @@ static unsigned int ZERO = 0; // Allow optional pass-by-reference parameters
 
 class Binary {
   public:
-    Binary(unsigned int sz) {
+    Binary(unsigned int sz, unsigned int dec = 0) {
       size = sz;
+      decimal = dec;
       number = new bool[size];
     }
 
     Binary() {
       size = 0;
+      decimal = 0;
       number = NULL;
     }
 
     ~Binary() {
       if(number != NULL) 
         delete [] number;
+    }
+
+    void setDecimal(unsigned int loc) {
+      if(loc < size) {
+        decimal = loc;
+      }
     }
 
     friend Binary add(const Binary& lhs, const Binary& rhs, bool& overflow, unsigned int& cost) {
@@ -83,6 +91,8 @@ class Binary {
         size = val.size;
       }
 
+      decimal = val.decimal;
+      
       for(unsigned int i = 0; i < size; i++) {
         number[i] = val.number[i];
       }
@@ -121,14 +131,26 @@ class Binary {
      * the way most people expect it to.
     */
     Binary& operator= (const char* val) {
-      unsigned int i;
-      for(i = 0; i < size && i < strlen(val); i++) {
-        number[i] = (val[strlen(val) - i - 1] == '1');
+      unsigned int i, j;
+      for(i = 0, j = 0; i < size && j < strlen(val); i++, j++) {
+        if(val[strlen(val) - j - 1] == '.') {
+          decimal = j++;
+        }
+
+        number[i] = (val[strlen(val) - j - 1] == '1');
+      }
+
+      char digit;
+      if(decimal == 0) {
+        digit = val[1];
+      }
+      else {
+        digit = val[0];
       }
 
       //Sign extend number stored
       for(i; i < size; i++) {
-        number[i] = (val[0] == '1');
+        number[i] = (digit == '1');
       }
 
       return *this;
@@ -137,6 +159,7 @@ class Binary {
   private:
     bool* number;
     unsigned int size;
+    unsigned int decimal;
 
 };
 
