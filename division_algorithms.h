@@ -1,5 +1,6 @@
 Binary multiplicative_division(const Binary& a, const Binary& b, unsigned int& cost) {
-  Binary delta = ONE - b;
+  Binary ONE(a.size);
+  ONE = 1;
 
   Binary f_i = F0;
   Binary a_i = a;
