@@ -93,11 +93,13 @@ class Binary {
       // Calculate indices in lhs and rhs to start adding at
       unsigned int l = max(static_cast<int>(lhs.decimal - result.decimal), 0);
       unsigned int r = max(static_cast<int>(rhs.decimal - result.decimal), 0);
+      result.truncate = (l > 0) || (r > 0);
 
       // Calculate which index in result to start adding l and r to
       unsigned int l_start = max(static_cast<int>(result.decimal - lhs.decimal), 0);
       unsigned int r_start = max(static_cast<int>(result.decimal - rhs.decimal), 0);
 
+      // Add 
       for(unsigned int i = 0; i < sz; i++) {
         if(i >= l_start && i >= r_start && l < lhs.size && r < rhs.size) {
           result.number[i] = full_add(lhs.number[l++], rhs.number[r++], carry);
@@ -114,6 +116,9 @@ class Binary {
       }
 
       result.overflow = carry;
+  
+      // Update cost
+      cost += 4 * sz;
 
       return result;
     }
