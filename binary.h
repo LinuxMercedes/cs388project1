@@ -10,6 +10,30 @@ static unsigned int ZERO = 0; // Only use for optional pass-by-reference paramet
 
 using namespace std;
 
+bool full_add(const bool lhs, const bool rhs, bool& carry) {
+  bool ret;
+  if(lhs) {
+    if(rhs) {
+      ret = carry;
+      carry = true;
+    }
+    else {
+      ret = !carry;
+    }
+  }
+  else {
+    if(rhs) {
+      ret = !carry;
+    }
+    else {
+      ret = carry;
+      carry = false;
+    }
+  }
+
+  return ret;
+}
+
 class Binary {
   public:
     Binary(unsigned int sz, unsigned int dec = 0) {
