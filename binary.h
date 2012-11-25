@@ -56,21 +56,21 @@ class Binary {
       overflow = val.overflow;
       carryin = val.carryin;
       truncate = val.truncate;
-      
+
       for(unsigned int i = 0; i < size; i++) {
         number[i] = val.number[i];
       }
     }
 
     ~Binary() {
-      if(number != NULL) 
+      if(number != NULL)
         delete [] number;
     }
 
     bool has_overflow() {
       return overflow;
     }
-    
+
     bool has_carryin() {
       return carryin;
     }
@@ -113,7 +113,7 @@ class Binary {
       unsigned int l_start = max(static_cast<int>(result.decimal - lhs.decimal), 0);
       unsigned int r_start = max(static_cast<int>(result.decimal - rhs.decimal), 0);
 
-      // Add 
+      // Add
       for(unsigned int i = 0; i < sz; i++) {
         if(i >= l_start && i >= r_start && l < lhs.size && r < rhs.size) {
           result.number[i] = full_add(lhs.number[l++], rhs.number[r++], carry);
@@ -130,7 +130,7 @@ class Binary {
       }
 
       result.overflow = carry;
-  
+
       // Update cost
       cost += 4 * sz;
 
@@ -145,6 +145,53 @@ class Binary {
     }
 
     friend Binary mul(const Binary& b, const Binary& q, unsigned int& cost) {
+      if (b.get_size() != q.get_size()) {
+        throw string("Unequal sizes.");
+      }
+      int size = q.get_size();
+      int floor_log2 = static_cast<int>(floor(log(size)/log(2)));
+
+      // build matrix of summands
+      Binary *matrix_of_summands = new Binary[size];
+      for(int i = 0; i < size; i++) {
+        matrix_of_summands[i] = Binary(2*size-1);
+        for(int j = 0; j < (2*size-1); j++) {
+          if(i <= j && j < (size + i)) {
+            matrix_of_summands[i].number[j] = q.number[i] & b.number[j-i];
+          } else {
+            matrix_of_summands[i].number[j] = 0;
+          }
+        }
+      }
+
+      Binary *results = new Binary[size];
+      for(int i = 0; i < size; i++) {
+        results[i] = matrix_of_summands[i];
+      }
+
+      int results_size = size;
+      while(results_size > 1){
+        int i, next = 0;
+        for(i = 0; i < results_size/2; i++, next+=2) {
+          results[i] = add(results[next], results[next + 1], cost);
+        }
+        if (results_size % 2) {
+          results[i] = results[results_size-1];
+        }
+        results_size = (results_size + 1) / 2;
+      }
+
+      Binary result = results[0];
+      result.decimal = b.decimal + q.decimal;
+
+      delete[] matrix_of_summands;
+      delete[] results;
+
+      cost = 1 + (floor_log2 * 4) + (2 * size - 1) * 4;
+      return result;
+    }
+
+    friend Binary booth_mul(const Binary& b, const Binary& q, unsigned int& cost) {
       int size = q.get_size();
 
       // Set up ACQ register and shift b to the left by size
@@ -160,16 +207,22 @@ class Binary {
           big_b.number[i] = b.number[i-size];
         }
       }
+      big_b.decimal = size + b.decimal;
+      acq.decimal = q.decimal + b.decimal;
 
-      for(int i = 0; i < size; i++){
-        if (e_bit == false && acq.number[0] == true){
+      Binary n = big_b;
+      n.complement();
+      for(int i = 0; i < size; i++) {
+        if (e_bit == false && acq.number[0] == true) {
           acq = sub(acq, big_b, cost);
-        } else if (e_bit == true && acq.number[0] == false){
+        } else if (e_bit == true && acq.number[0] == false) {
           acq = add(acq, big_b, cost);
         }
+
         e_bit = acq.number[0];
         acq = acq >> 1;
       }
+
       return acq;
     }
 
@@ -243,7 +296,7 @@ class Binary {
     Binary operator >>(const Binary& val) {
       Binary temp(val.size);
       temp = (*this);
-      for(int i = 1; i < size - 1; i++) {
+      for(int i = 0; i < size - 1; i++) {
         temp.number[i] = temp.number[i + 1];
       }
       return temp;
@@ -252,18 +305,18 @@ class Binary {
     bool operator== (const Binary& val) {
       int i, j;
       if(decimal < val.decimal) {
-        i = 0; 
+        i = 0;
         j = val.decimal - decimal;
       }
       else {
         i = val.decimal - decimal;
-        j = 0; 
+        j = 0;
       }
       while(i < size && j < val.size) {
         if (number[i] != val.number[j]) {
           return false;
         }
-        i++; 
+        i++;
         j++;
       }
       return true;
@@ -283,7 +336,7 @@ class Binary {
       }
 
       decimal = val.decimal;
-      
+
       for(unsigned int i = 0; i < size; i++) {
         number[i] = val.number[i];
       }
@@ -316,8 +369,8 @@ class Binary {
       return *this;
     }
 
-    /* 
-     * Assign from a character array of binary digits 
+    /*
+     * Assign from a character array of binary digits
      * Note: indexing on the string is reversed so that it works
      * the way most people expect it to.
     */

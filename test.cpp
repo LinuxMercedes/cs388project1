@@ -5,11 +5,11 @@ using namespace std;
 
 int main() {
   unsigned int cost = 0;
-  Binary b(8);
-  Binary a(8);
+  Binary b(4);
+  Binary a(4);
 
-  a = "0000011";
-  b = "0000011";
+  a = "0.101";
+  b = "0.011";
 
   Binary c = sub(a, b, cost);
 //  b.complement();
