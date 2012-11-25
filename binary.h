@@ -53,6 +53,18 @@ class Binary {
         delete [] number;
     }
 
+    bool has_overflow() {
+      return overflow;
+    }
+    
+    bool has_carryin() {
+      return carryin;
+    }
+
+    bool has_truncate() {
+      return truncate;
+    }
+
     unsigned int get_size() const {
       return size;
     }
@@ -244,6 +256,10 @@ class Binary {
     bool* number;
     unsigned int size;
     unsigned int decimal;
+
+    bool overflow;
+    bool carryin;
+    bool truncate;
 
 };
 
