@@ -193,7 +193,7 @@ class Binary {
       return value;
     }
 
-    const char* char_val() {
+    string char_val() {
       stringstream str;
       for(int i = size - 1; i >= 0; i--) {
         if(decimal == i + 1) {
@@ -202,7 +202,7 @@ class Binary {
         str << number[i];
       }
 
-      return str.str().c_str(); //yuck
+      return str.str();
     }
 
     /* Deprecated */
