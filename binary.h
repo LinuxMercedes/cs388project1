@@ -109,6 +109,30 @@ class Binary {
       return value;
     }
 
+    bool operator== (const Binary& val) {
+      int i, j;
+      if(decimal < val.decimal) {
+	i = 0; 
+	j = val.decimal - decimal;
+      }
+      else {
+	i = val.decimal - decimal;
+	j = 0; 
+      }
+      while(i < size && j < val.size) {
+	if (number[i] != val.number[j]) {
+	  return false;
+	}
+	i++; 
+	j++;
+      }
+      return true;
+    }
+
+    bool operator!= (const Binary& val) {
+      return !((*this) == val);
+    }
+
     Binary& operator= (const Binary& val) {
       if(size != val.size) {
         if(number != NULL) {
