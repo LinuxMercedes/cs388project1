@@ -12,9 +12,8 @@ Binary multiplicative_division(const Binary& a, const Binary& b, unsigned int& c
   bool unused_overflow;
   
   while(b_i != one) {
-    b_i_complement = b_i;
-    b_i_complement.complement(cost);
-    f_i = add(b_i_complement, one, unused_overflow, cost);
+    f_i = b_i;
+    b_i.complement();
     a_i = mul(a_i, f_i, cost);
     b_i = mul(b_i, f_i, cost);
   }
