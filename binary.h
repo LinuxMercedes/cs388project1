@@ -140,7 +140,7 @@ class Binary {
       result.carryin = carry; // I think this is right for subtraction
 
       // Update cost
-      cost += 4 * sz;
+      cost += 3 + 2 * (sz - 1);
 
       return result;
     }
@@ -313,27 +313,45 @@ class Binary {
     }
 
     bool operator== (const Binary& val) {
-      /* TODO This is broken. What about decimal places? */
-      int i, j;
+      int i = 0, j = 0;
+      
+      //Account for zeros on the right of the number
       if(decimal < val.decimal) {
-        i = 0;
-        j = val.decimal - decimal;
+        while(j < val.decimal - decimal) {
+          if(val.number[j++]) {
+            return false;
+          }
+        }
       }
       else {
-        i = val.decimal - decimal;
-        j = 0;
+        while(i < decimal - val.decimal) {
+          if(number[i++]) {
+            return false;
+          }
+        }
       }
-      while(i < size || j < val.size) {
-        bool ival = (i < size ? number[i] : 
-                     (i < decimal ? 0 : number[size-1]));
-        bool jval = (j < val.size ? val.number[j] : 
-                     (j < val.decimal ? 0 : val.number[val.size-1]));
-        if (ival != jval) {
+
+      // Compare numbers
+      while(i < size && j < val.size) {
+        if (number[i] != val.number[j]) {
           return false;
         }
         i++;
         j++;
       }
+      
+      // Check for excess padding
+      while(i < size) {
+        if(number[i++] != number[size - 1]) {
+          return false;
+        }
+      }
+      while(j < val.size) {
+        if(val.number[j++] != val.number[val.size - 1]) {
+          return false;
+        }
+      }
+
       return true;
     }
 
