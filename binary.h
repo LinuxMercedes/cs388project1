@@ -306,15 +306,25 @@ class Binary {
     }
 
     bool operator== (const Binary& val) {
-      int i, j;
+      int i = 0, j = 0;
+      
+      //Account for zeros on the right of the number
       if(decimal < val.decimal) {
-        i = 0;
-        j = val.decimal - decimal;
+        while(j < val.decimal - decimal) {
+          if(val.number[j++]) {
+            return false;
+          }
+        }
       }
       else {
-        i = val.decimal - decimal;
-        j = 0;
+        while(i < decimal - val.decimal) {
+          if(number[i++]) {
+            return false;
+          }
+        }
       }
+
+      // Compare numbers
       while(i < size && j < val.size) {
         if (number[i] != val.number[j]) {
           return false;
@@ -322,6 +332,19 @@ class Binary {
         i++;
         j++;
       }
+      
+      // Check for excess padding
+      while(i < size) {
+        if(number[i++] != number[size - 1]) {
+          return false;
+        }
+      }
+      while(j < val.size) {
+        if(val.number[j++] != val.number[val.size - 1]) {
+          return false;
+        }
+      }
+
       return true;
     }
 
