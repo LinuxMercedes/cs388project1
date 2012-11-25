@@ -236,7 +236,9 @@ class Binary {
       for(i = 0; i < size && number[i] != 0; i++) {
         number[i] = 0;
       }
-      number[i] = 1;
+      if(i < size) {
+        number[i] = 1;
+      }
 
       // Add cost
       cost += size;
