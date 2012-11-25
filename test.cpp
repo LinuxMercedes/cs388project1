@@ -6,7 +6,7 @@ using namespace std;
 int main() {
   Binary b(5);
 
-  b = "0000.1";
+  b = "1.010";
 
   //b.complement();
 

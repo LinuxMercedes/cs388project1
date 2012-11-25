@@ -150,14 +150,29 @@ class Binary {
     */
     Binary& operator= (const char* val) {
       unsigned int i, j;
-      for(i = 0, j = 0; i < size || j < strlen(val); i++, j++) {
+      bool decset = false;
+
+      // Copy number from character to number array
+      for(i = 0, j = 0; i < size && j < strlen(val); i++, j++) {
+        //Set the decimal point if we find it
         if(val[strlen(val) - j - 1] == '.') {
           decimal = j;
           i--;
+          decset = true;
           continue;
         }
 
         number[i] = (val[strlen(val) - j - 1] == '1');
+      }
+
+      // Catch an edge case where the decimal point isn't set in the previous loop
+      if(!decset) {
+        for(j = 0; j < strlen(val); j++) {
+          if(val[strlen(val) - j - 1] == '.') {
+            decimal = j;
+            break;
+          }
+        }
       }
 
       //Sign extend number stored
