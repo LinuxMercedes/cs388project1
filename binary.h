@@ -133,7 +133,7 @@ class Binary {
       result.carryin = carry; // I think this is right for subtraction
 
       // Update cost
-      cost += 4 * sz;
+      cost += 3 + 2 * (sz - 1);
 
       return result;
     }
