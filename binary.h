@@ -130,6 +130,7 @@ class Binary {
       }
 
       result.overflow = carry;
+      result.carryin = carry; // I think this is right for subtraction
 
       // Update cost
       cost += 4 * sz;
