@@ -123,7 +123,13 @@ class Binary {
       return result;
     }
 
-    friend Binary sub(const Binary& lhs, const Binary& rhs, unsigned int& cost);
+    friend Binary sub(const Binary& lhs, const Binary& rhs, unsigned int& cost) {
+      // Take 2's complement and add!
+      Binary r = rhs;
+      r.complement();
+      return add(lhs, r, cost);
+    }
+
     friend Binary mul(const Binary& lhs, const Binary& rhs, unsigned int& cost);
 
     void complement(unsigned int& cost = ZERO) {
