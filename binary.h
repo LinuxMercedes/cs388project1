@@ -130,7 +130,34 @@ class Binary {
       return add(lhs, r, cost);
     }
 
-    friend Binary mul(const Binary& lhs, const Binary& rhs, unsigned int& cost);
+    friend Binary mul(const Binary& b, const Binary& q, unsigned int& cost) {
+      int size = q.get_size();
+
+      // Set up ACQ register and shift b to the left by size
+      Binary acq(2 * size);
+      Binary big_b(2 * size);
+      bool e_bit = false;
+      for(int i = 0; i < 2*size; i++) {
+        if(i < size) {
+          acq.number[i] = q.number[i];
+          big_b.number[i] = 0;
+        } else {
+          acq.number[i] = 0;
+          big_b.number[i] = b.number[i-size];
+        }
+      }
+
+      for(int i = 0; i < size; i++){
+        if (e_bit == false && acq.number[i] == true){
+          add(acq, big_b, cost);
+        } else if (e_bit == true && acq.number[i] == false){
+          sub(acq, big_b, cost);
+        }
+        e_bit = acq.number[0];
+        acq = acq >> 1;
+      }
+      return acq;
+    }
 
     void complement(unsigned int& cost = ZERO) {
       for(unsigned int i = 0; i < size; i++) {
@@ -193,7 +220,7 @@ class Binary {
       Binary temp(val.size);
       temp = (*this);
       for(int i = (size - 1); i > 0; i--) {
-	temp.number[i] = temp.number[i - 1];
+        temp.number[i] = temp.number[i - 1];
       }
       temp.number[0] = 0;
       return temp;
@@ -203,7 +230,7 @@ class Binary {
       Binary temp(val.size);
       temp = (*this);
       for(int i = 1; i < size - 1; i++) {
-	temp.number[i] = temp.number[i + 1];
+        temp.number[i] = temp.number[i + 1];
       }
       return temp;
     }

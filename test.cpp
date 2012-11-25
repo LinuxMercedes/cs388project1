@@ -5,11 +5,11 @@ using namespace std;
 
 int main() {
   unsigned int cost = 0;
-  Binary b(5);
-  Binary a(3);
+  Binary b(8);
+  Binary a(8);
 
-  a = "01.1";
-  b = ".11111";
+  a = "0000011";
+  b = "0000011";
 
   Binary c = add(a, b, cost);
   //b.complement();
@@ -18,6 +18,7 @@ int main() {
   cout << b.char_val() << endl;
   cout << c.char_val() << endl;
 
+  cout << mul(a, b, cost).char_val() << endl;
   return 0;
 }
 
