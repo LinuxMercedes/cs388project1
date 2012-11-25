@@ -48,6 +48,20 @@ class Binary {
       number = NULL;
     }
 
+    Binary(const Binary& val) {
+      number = new bool[val.size];
+      size = val.size;
+      decimal = val.decimal;
+
+      overflow = val.overflow;
+      carryin = val.carryin;
+      truncate = val.truncate;
+      
+      for(unsigned int i = 0; i < size; i++) {
+        number[i] = val.number[i];
+      }
+    }
+
     ~Binary() {
       if(number != NULL) 
         delete [] number;

@@ -11,8 +11,8 @@ int main() {
   a = "0000011";
   b = "0000011";
 
-  Binary c = add(a, b, cost);
-  //b.complement();
+  Binary c = sub(a, b, cost);
+//  b.complement();
 
   cout << a.char_val() << endl;
   cout << b.char_val() << endl;
