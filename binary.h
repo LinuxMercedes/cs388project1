@@ -178,6 +178,25 @@ class Binary {
       return value;
     }
 
+    Binary operator <<(const Binary& val) {
+      Binary temp(val.size);
+      temp = (*this);
+      for(int i = (size - 1); i > 0; i--) {
+	temp.number[i] = temp.number[i - 1];
+      }
+      temp.number[0] = 0;
+      return temp;
+    }
+
+    Binary operator >>(const Binary& val) {
+      Binary temp(val.size);
+      temp = (*this);
+      for(int i = 1; i < size - 1; i++) {
+	temp.number[i] = temp.number[i + 1];
+      }
+      return temp;
+    }
+
     bool operator== (const Binary& val) {
       int i, j;
       if(decimal < val.decimal) {
