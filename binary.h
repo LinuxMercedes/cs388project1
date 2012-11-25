@@ -5,6 +5,7 @@
 #include <string.h>
 #include <algorithm>
 #include <sstream>
+#include <iostream>
 
 static unsigned int ZERO = 0; // Only use for optional pass-by-reference parameters
 
@@ -87,6 +88,12 @@ class Binary {
     void set_decimal(unsigned int loc) {
       if(loc < size) {
         decimal = loc;
+      }
+    }
+
+    void set_digit(unsigned int loc, bool val) {
+      if(loc < size) {
+        number[loc] = val;
       }
     }
 
@@ -306,6 +313,7 @@ class Binary {
     }
 
     bool operator== (const Binary& val) {
+      /* TODO This is broken. What about decimal places? */
       int i, j;
       if(decimal < val.decimal) {
         i = 0;
@@ -315,8 +323,12 @@ class Binary {
         i = val.decimal - decimal;
         j = 0;
       }
-      while(i < size && j < val.size) {
-        if (number[i] != val.number[j]) {
+      while(i < size || j < val.size) {
+        bool ival = (i < size ? number[i] : 
+                     (i < decimal ? 0 : number[size-1]));
+        bool jval = (j < val.size ? val.number[j] : 
+                     (j < val.decimal ? 0 : val.number[val.size-1]));
+        if (ival != jval) {
           return false;
         }
         i++;
@@ -354,6 +366,7 @@ class Binary {
     /* Assign from an integer */
     Binary& operator= (int val) {
       bool cpl = (val < 0);
+      decimal = 0;
 
       if(cpl) {
         val *= -1;
