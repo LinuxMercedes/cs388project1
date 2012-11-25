@@ -29,10 +29,15 @@ class Binary {
         delete [] number;
     }
 
-    void setDecimal(unsigned int loc) {
+    // Set with the number of digits to the right of the decimal point
+    void set_decimal(unsigned int loc) {
       if(loc < size) {
         decimal = loc;
       }
+    }
+
+    unsigned int get_decimal() {
+      return decimal;
     }
 
     friend Binary add(const Binary& lhs, const Binary& rhs, bool& overflow, unsigned int& cost) {
