@@ -150,25 +150,19 @@ class Binary {
     */
     Binary& operator= (const char* val) {
       unsigned int i, j;
-      for(i = 0, j = 0; i < size && j < strlen(val); i++, j++) {
+      for(i = 0, j = 0; i < size || j < strlen(val); i++, j++) {
         if(val[strlen(val) - j - 1] == '.') {
-          decimal = j++;
+          decimal = j;
+          i--;
+          continue;
         }
 
         number[i] = (val[strlen(val) - j - 1] == '1');
       }
 
-      char digit;
-      if(decimal == 0) {
-        digit = val[1];
-      }
-      else {
-        digit = val[0];
-      }
-
       //Sign extend number stored
       for(i; i < size; i++) {
-        number[i] = (digit == '1');
+        number[i] = (val[0] == '1');
       }
 
       return *this;
