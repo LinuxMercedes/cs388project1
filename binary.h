@@ -80,12 +80,45 @@ class Binary {
       return decimal;
     }
 
-    friend Binary add(const Binary& lhs, const Binary& rhs, bool& overflow, unsigned int& cost) {
+    friend Binary add(const Binary& lhs, const Binary& rhs, unsigned int& cost) {
       bool carry = false;
+      unsigned int sz = max(lhs.size, rhs.size);
+      Binary result(sz);
 
+      // Calculate resulting decimal location
+      unsigned int left_ldec = lhs.size - lhs.decimal;
+      unsigned int right_ldec = rhs.size - rhs.decimal;
+      result.decimal = sz - max(left_ldec, right_ldec);
+
+      // Calculate indices in lhs and rhs to start adding at
+      unsigned int l = max(static_cast<int>(lhs.decimal - result.decimal), 0);
+      unsigned int r = max(static_cast<int>(rhs.decimal - result.decimal), 0);
+
+      // Calculate which index in result to start adding l and r to
+      unsigned int l_start = max(static_cast<int>(result.decimal - lhs.decimal), 0);
+      unsigned int r_start = max(static_cast<int>(result.decimal - rhs.decimal), 0);
+
+      for(unsigned int i = 0; i < sz; i++) {
+        if(i >= l_start && i >= r_start && l < lhs.size && r < rhs.size) {
+          result.number[i] = full_add(lhs.number[l++], rhs.number[r++], carry);
+        }
+        else if(i >= l_start && l < lhs.size) {
+          result.number[i] = full_add(lhs.number[l++], false, carry);
+        }
+        else if(i >= r_start && r < rhs.size) {
+          result.number[i] = full_add(rhs.number[r++], false, carry);
+        }
+        else {
+          result.number[i] = full_add(false, false, carry);
+        }
+      }
+
+      result.overflow = carry;
+
+      return result;
     }
 
-    friend Binary sub(const Binary& lhs, const Binary& rhs, bool& carryin, unsigned int& cost);
+    friend Binary sub(const Binary& lhs, const Binary& rhs, unsigned int& cost);
     friend Binary mul(const Binary& lhs, const Binary& rhs, unsigned int& cost);
 
     void complement(unsigned int& cost = ZERO) {
