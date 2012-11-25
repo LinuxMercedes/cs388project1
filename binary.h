@@ -112,19 +112,19 @@ class Binary {
     bool operator== (const Binary& val) {
       int i, j;
       if(decimal < val.decimal) {
-	i = 0; 
-	j = val.decimal - decimal;
+        i = 0; 
+        j = val.decimal - decimal;
       }
       else {
-	i = val.decimal - decimal;
-	j = 0; 
+        i = val.decimal - decimal;
+        j = 0; 
       }
       while(i < size && j < val.size) {
-	if (number[i] != val.number[j]) {
-	  return false;
-	}
-	i++; 
-	j++;
+        if (number[i] != val.number[j]) {
+          return false;
+        }
+        i++; 
+        j++;
       }
       return true;
     }
