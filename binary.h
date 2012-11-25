@@ -339,6 +339,10 @@ class Binary {
       }
 
       decimal = val.decimal;
+      overflow = val.overflow;
+      carryin = val.carryin;
+      truncate = val.truncate;
+
 
       for(unsigned int i = 0; i < size; i++) {
         number[i] = val.number[i];
