@@ -162,10 +162,10 @@ class Binary {
       }
 
       for(int i = 0; i < size; i++){
-        if (e_bit == false && acq.number[i] == true){
-          add(acq, big_b, cost);
-        } else if (e_bit == true && acq.number[i] == false){
-          sub(acq, big_b, cost);
+        if (e_bit == false && acq.number[0] == true){
+          acq = sub(acq, big_b, cost);
+        } else if (e_bit == true && acq.number[0] == false){
+          acq = add(acq, big_b, cost);
         }
         e_bit = acq.number[0];
         acq = acq >> 1;
