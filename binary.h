@@ -29,6 +29,10 @@ class Binary {
         delete [] number;
     }
 
+    unsigned int get_size() const {
+      return size;
+    }
+
     // Set with the number of digits to the right of the decimal point
     void set_decimal(unsigned int loc) {
       if(loc < size) {

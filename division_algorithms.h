@@ -1,5 +1,7 @@
+static const int F0 = 1;
+
 Binary multiplicative_division(const Binary& a, const Binary& b, unsigned int& cost) {
-  Binary one(a.size), zero(a.size);
+  Binary one(a.get_size()), zero(a.get_size());
   zero = 0;
   one = 1;
 
