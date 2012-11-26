@@ -18,8 +18,8 @@ Binary multiplicative_division(const Binary& a, const Binary& b, unsigned int& c
   Binary b_i = b;
   
   for(int i = 0; i < ITERLIMIT && b_i != one; i++) {
-    a_i = mul(a_i, f_i, cost);
-    b_i = mul(b_i, f_i, cost);
+    a_i = mul(a_i, f_i, cost).truncate_to_size(size);
+    b_i = mul(b_i, f_i, cost).truncate_to_size(size);
     f_i = b_i;
     f_i.complement();
   }
