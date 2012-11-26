@@ -490,10 +490,26 @@ class Binary {
       return *this;
     }
 
+    /**
+     * Converts this number to a double
+     */
+    double toDouble() const
+    {
+    	double value = 0;
+    	for(int i = 0; i != size; i++)
+		{
+			if(number[i])
+			{
+				value += pow(2, i - (decimal));
+			}
+		}
+    	return value;
+    }
+
   private:
     bool* number;
-    unsigned int size;
-    unsigned int decimal;
+    int size;
+    int decimal;
 
     bool overflow;
     bool carryin;
@@ -506,7 +522,7 @@ class Binary {
  */
 ostream& operator <<(ostream &os, const Binary &num)
 {
-	return os << num.char_val();
+	return os << "(" << num.toDouble() << ") " << num.char_val();
 }
 
 #endif

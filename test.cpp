@@ -40,7 +40,9 @@ int main() {
     dividend = DIVIDENDS[i].c_str();
     divisor = DIVISORS[i].c_str();
     cost = 0;
+    cout << "Dividend / Divisor: " << dividend << " / " << divisor << endl;
     cout << "Quotient: " << multiplicative_division(dividend, divisor, cost) << endl;
+    cout << "Quotient: " << divisor_reciprocation(dividend, divisor, cost) << endl;
     cout << "Cost: " << cost << endl;
   }
 

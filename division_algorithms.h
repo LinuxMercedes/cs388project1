@@ -40,23 +40,23 @@ Binary multiplicative_division(const Binary& a, const Binary& b, unsigned int& c
  */
 Binary divisor_reciprocation(const Binary& a, const Binary& b, unsigned int& cost) {
 
-	std::cout << "a: " << a << endl;
-	std::cout << "b: " << b << endl;
+//	std::cout << "a: " << a << endl;
+//	std::cout << "b: " << b << endl;
 
 	Binary x_0(b.get_size(), b.get_decimal(), 1); // Approximately equal to 1 / B
 
-	std::cout << "x_" << 0 << " = " << x_0 << endl;
+//	std::cout << "x_" << 0 << " = " << x_0 << endl;
 
 	Binary a_0 = mul(b, x_0, cost);
 
-	std::cout << "a_" << 0 << " = " << a_0 << endl;
+//	std::cout << "a_" << 0 << " = " << a_0 << endl;
 
 	Binary x_i = x_0, a_i = a_0;
 	const Binary TWO(b.get_size(), b.get_decimal(), 2);
 
-	std::cout << "Iteration #" << 0 << endl;
-	std::cout << "x_" << 0 << " = " << x_0 << endl;
-	std::cout << "a_" << 0 << " = " << a_0 << endl;
+//	std::cout << "Iteration #" << 0 << endl;
+//	std::cout << "x_" << 0 << " = " << x_0 << endl;
+//	std::cout << "a_" << 0 << " = " << a_0 << endl;
 
 	for(int i = 0; i != 2; i++)
 	{
@@ -70,11 +70,11 @@ Binary divisor_reciprocation(const Binary& a, const Binary& b, unsigned int& cos
 		a_i = mul(a_0, sub_a, costA);
 		cost = max(costX, costA);
 
-		std::cout << "Iteration #" << i + 1 << endl;
-		std::cout << "subx_" << i + 1<< " = " << sub_x << endl;
-		std::cout << "suba_" << i + 1 << " = " << sub_a << endl;
-		std::cout << "x_" << i + 1<< " = " << x_i << endl;
-		std::cout << "a_" << i + 1 << " = " << a_i << endl;
+//		std::cout << "Iteration #" << i + 1 << endl;
+//		std::cout << "subx_" << i + 1<< " = " << sub_x << endl;
+//		std::cout << "suba_" << i + 1 << " = " << sub_a << endl;
+//		std::cout << "x_" << i + 1<< " = " << x_i << endl;
+//		std::cout << "a_" << i + 1 << " = " << a_i << endl;
 
 		// x_0 is really x_i-1 for the purposes of this loop.
 		x_0 = x_i;
