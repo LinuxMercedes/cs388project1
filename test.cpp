@@ -31,6 +31,33 @@ string DIVISORS[8] = {
   "0.110111101111", // .DEF
 };
 
+/*
+ * write double to binary to os
+ */
+void doubleAsBinary(ostream &os, double num)
+{
+	os << "(" << num << ") ";
+
+	int i = 12;
+	while(i != -12)
+	{
+		if(num >= pow(2, i))
+		{
+			os << "1";
+			num -= pow(2, i);
+		}
+		else
+		{
+			os << "0";
+		}
+
+		if(i == 0)
+			os << ".";
+
+		i--;
+	}
+}
+
 int main() {
 
   unsigned int cost;
@@ -44,7 +71,11 @@ int main() {
     cout << "Divisor: " << divisor << endl;
     cout << "Quotient: " << multiplicative_division(dividend, divisor, cost) << endl;
     cout << "Quotient: " << divisor_reciprocation(dividend, divisor, cost) << endl;
-    cout << "Correct Value: " << (dividend.toDouble() / divisor.toDouble()) << endl;
+
+    cout << "Correct Value: ";
+    doubleAsBinary(cout, dividend.toDouble() / divisor.toDouble());
+    cout << endl;
+
     cout << "Cost: " << cost << endl;
   }
 
