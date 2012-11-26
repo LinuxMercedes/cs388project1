@@ -224,41 +224,6 @@ class Binary {
       return result;
     }
 
-    friend Binary booth_mul(const Binary& b, const Binary& q, unsigned int& cost) {
-      int size = q.get_size();
-
-      // Set up ACQ register and shift b to the left by size
-      Binary acq(2 * size);
-      Binary big_b(2 * size);
-      bool e_bit = false;
-      for(int i = 0; i < 2*size; i++) {
-        if(i < size) {
-          acq.number[i] = q.number[i];
-          big_b.number[i] = 0;
-        } else {
-          acq.number[i] = 0;
-          big_b.number[i] = b.number[i-size];
-        }
-      }
-      big_b.decimal = size + b.decimal;
-      acq.decimal = q.decimal + b.decimal;
-
-      Binary n = big_b;
-      n.complement();
-      for(int i = 0; i < size; i++) {
-        if (e_bit == false && acq.number[0] == true) {
-          acq = sub(acq, big_b, cost);
-        } else if (e_bit == true && acq.number[0] == false) {
-          acq = add(acq, big_b, cost);
-        }
-
-        e_bit = acq.number[0];
-        acq = acq >> 1;
-      }
-
-      return acq;
-    }
-
     Binary pad_to_size(const unsigned int new_size) const {
       if (new_size < size) {
         throw "new_size must be greater than current size";
