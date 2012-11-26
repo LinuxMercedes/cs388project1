@@ -235,8 +235,15 @@ class Binary {
         return Binary(*this);
       }
       Binary q(new_size);
-
-      q = this->char_val().c_str();
+      int size_diff = new_size - size;
+      for (int i = 0; i < new_size; i++){
+        if(i >= size_diff) {
+          q.number[i] = number[i-size_diff];
+        } else {
+          q.number[i] = 0;
+        }
+      }
+      q.decimal = decimal + size_diff;
 
       return q;
     }
