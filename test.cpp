@@ -44,6 +44,7 @@ int main() {
     cout << "Divisor: " << divisor << endl;
     cout << "Quotient: " << multiplicative_division(dividend, divisor, cost) << endl;
     cout << "Quotient: " << divisor_reciprocation(dividend, divisor, cost) << endl;
+    cout << "Correct Value: " << (dividend.toDouble() / divisor.toDouble()) << endl;
     cout << "Cost: " << cost << endl;
   }
 
