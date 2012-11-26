@@ -60,6 +60,13 @@ void doubleAsBinary(ostream &os, double num)
 
 int main() {
 
+
+	unsigned int costly = 0;
+	Binary a(4), b(8);
+	a = "00001";
+	b = "00001.0010";
+	cout << a << " * " << b << " = " << mul(a, b, costly) << endl;
+
   unsigned int cost;
   for(int i = 0; i < 1; i++) {
     Binary dividend(DIVIDENDS[i].size()-1);
