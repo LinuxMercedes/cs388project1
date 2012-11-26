@@ -172,11 +172,30 @@ class Binary {
       return add(lhs, r, cost);
     }
 
-    friend Binary mul(const Binary& b, const Binary& q, unsigned int& cost) {
-      if (b.get_size() != q.get_size()) {
-        throw string("Unequal sizes.");
+    friend Binary mul(const Binary& p_b, const Binary& p_q, unsigned int& cost) {
+      Binary b = p_b, q = p_q;
+      int size = p_q.get_size();
+      if(p_b.get_size() > p_q.get_size()) {
+        size = p_b.get_size();
+        q = Binary(size);
+        for (int i = 0; i < size; i++){
+          if(i < p_q.get_size()){
+            q.number[i] = p_q.number[i];
+          } else {
+            q.number[i] = q.number[i-1];
+          }
+        }
       }
-      int size = q.get_size();
+      if(p_b.get_size() < p_q.get_size()) {
+        b = Binary(size);
+        for (int i = 0; i < size; i++){
+          if(i < p_b.get_size()){
+            b.number[i] = p_b.number[i];
+          } else {
+            b.number[i] = b.number[i-1];
+          }
+        }
+      }
       int floor_log2 = static_cast<int>(floor(log(size)/log(2)));
 
       // build matrix of summands
