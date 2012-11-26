@@ -11,6 +11,9 @@ static unsigned int ZERO = 0; // Only use for optional pass-by-reference paramet
 
 using namespace std;
 
+class Binary;
+ostream& operator <<(ostream &os, const Binary &num);
+
 bool full_add(const bool lhs, const bool rhs, bool& carry) {
   bool ret;
   if(lhs) {
@@ -232,21 +235,15 @@ class Binary {
         return Binary(*this);
       }
       Binary q(new_size);
-      int size_diff = new_size - size;
-      for (int i = 0; i < new_size; i++){
-        if(i > size_diff) {
-          q.number[i] = number[i-size_diff];
-        } else {
-          q.number[i] = 0;
-        }
-      }
-      q.decimal = decimal + size_diff;
+
+      q = this->char_val().c_str();
+
       return q;
     }
 
     Binary truncate_to_size(const unsigned int new_size) const {
       if (new_size > size) {
-        throw "new_size must be greater than current size";
+        throw "new_size must be smaller than current size";
       }
       if (new_size == size) {
         return Binary(*this);

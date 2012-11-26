@@ -65,6 +65,9 @@ int main() {
 	Binary a(4), b(8);
 	a = "00001";
 	b = "00001.0010";
+
+
+	cout << a << " padded to size 8: " << a.pad_to_size(8) << endl;
 	cout << a << " * " << b << " = " << mul(a, b, costly) << endl;
 
   unsigned int cost;
