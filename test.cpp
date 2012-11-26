@@ -60,8 +60,10 @@ void doubleAsBinary(ostream &os, double num)
 
 int main() {
 
+	const char DELIM = ';';
 
-	cout << "Dividend\tDivisor\tMultiplicative Division Quotient\tCost\tDivisor Reciprocation Quotient\tCost\tCorrect Value" << endl;
+	cout << "Dividend" << DELIM << "Divisor" << DELIM << "Multiplicative Division Quotient" << DELIM
+			<< "Cost" << DELIM << "Divisor Reciprocation Quotient" << DELIM << "Cost" << DELIM << "Correct Value" << endl;
 
   unsigned int cost;
   for(int i = 0; i < sizeof(DIVIDENDS) / sizeof(DIVIDENDS[0]); i++) {
@@ -71,19 +73,19 @@ int main() {
     divisor = DIVISORS[i].c_str();
     cost = 0;
 
-    cout << dividend << "\t";
-    cout << divisor << "\t";
-    cout << dividend << "\t";
-    cout << multiplicative_division(dividend, divisor, cost) << "\t";
-    cout << cost << "\t";
+    cout << dividend << DELIM;
+    cout << divisor << DELIM;
+    cout << dividend << DELIM;
+    cout << multiplicative_division(dividend, divisor, cost) << DELIM;
+    cout << cost << DELIM;
     cost = 0;
 
-    cout << divisor_reciprocation(dividend, divisor, cost) << "\t";
-	cout << cost << "\t";
+    cout << divisor_reciprocation(dividend, divisor, cost) << DELIM;
+	cout << cost << DELIM;
 	cost = 0;
 
 	doubleAsBinary(cout, dividend.toDouble() / divisor.toDouble());
-	cout << "\t" << endl;
+	cout << DELIM << endl;
 
 
 //    cout << "Dividend: " << dividend << endl;
