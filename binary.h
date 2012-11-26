@@ -177,26 +177,10 @@ class Binary {
       int size = p_q.get_size();
       if(p_b.get_size() > p_q.get_size()) {
         size = p_b.get_size();
-        q = Binary(size);
-        q.decimal = p_q.decimal;
-        for (int i = 0; i < size; i++){
-          if(i < p_q.get_size()){
-            q.number[i] = p_q.number[i];
-          } else {
-            q.number[i] = q.number[i-1];
-          }
-        }
+        q = p_q.pad_to_size(size);
       }
       if(p_b.get_size() < p_q.get_size()) {
-        b = Binary(size);
-        b.decimal = p_b.decimal;
-        for (int i = 0; i < size; i++){
-          if(i < p_b.get_size()){
-            b.number[i] = p_b.number[i];
-          } else {
-            b.number[i] = b.number[i-1];
-          }
-        }
+        b = p_b.pad_to_size(size);
       }
       int floor_log2 = static_cast<int>(floor(log(size)/log(2)));
 
@@ -240,39 +224,40 @@ class Binary {
       return result;
     }
 
-    friend Binary booth_mul(const Binary& b, const Binary& q, unsigned int& cost) {
-      int size = q.get_size();
-
-      // Set up ACQ register and shift b to the left by size
-      Binary acq(2 * size);
-      Binary big_b(2 * size);
-      bool e_bit = false;
-      for(int i = 0; i < 2*size; i++) {
-        if(i < size) {
-          acq.number[i] = q.number[i];
-          big_b.number[i] = 0;
+    Binary pad_to_size(const unsigned int new_size) const {
+      if (new_size < size) {
+        throw "new_size must be greater than current size";
+      }
+      if (new_size == size) {
+        return Binary(*this);
+      }
+      Binary q(new_size);
+      int size_diff = new_size - size;
+      for (int i = 0; i < new_size; i++){
+        if(i > size_diff) {
+          q.number[i] = number[i-size_diff];
         } else {
-          acq.number[i] = 0;
-          big_b.number[i] = b.number[i-size];
+          q.number[i] = 0;
         }
       }
-      big_b.decimal = size + b.decimal;
-      acq.decimal = q.decimal + b.decimal;
+      q.decimal = decimal + size_diff;
+      return q;
+    }
 
-      Binary n = big_b;
-      n.complement();
-      for(int i = 0; i < size; i++) {
-        if (e_bit == false && acq.number[0] == true) {
-          acq = sub(acq, big_b, cost);
-        } else if (e_bit == true && acq.number[0] == false) {
-          acq = add(acq, big_b, cost);
-        }
-
-        e_bit = acq.number[0];
-        acq = acq >> 1;
+    Binary truncate_to_size(const unsigned int new_size) const {
+      if (new_size > size) {
+        throw "new_size must be greater than current size";
       }
-
-      return acq;
+      if (new_size == size) {
+        return Binary(*this);
+      }
+      Binary q(new_size);
+      int size_diff = size - new_size;
+      for (int i = (new_size - 1); i >= 0; i--){
+          q.number[i] = number[i+size_diff];
+      }
+      q.decimal = decimal - size_diff;
+      return q;
     }
 
     void complement(unsigned int& cost = ZERO) {
@@ -293,24 +278,6 @@ class Binary {
       cost += size;
     }
 
-    /* Deprecated */
-    int int_val() {
-      int value = 0;
-
-      for(unsigned int i = 0; i < size; i++) {
-        if(number[i]) {
-          if(i == size - 1) {
-            value -= pow(2, i);
-          }
-          else {
-            value += pow(2, i);
-          }
-        }
-      }
-
-      return value;
-    }
-
     string char_val() const {
       stringstream str;
       for(int i = size - 1; i >= 0; i--) {
@@ -323,32 +290,28 @@ class Binary {
       return str.str();
     }
 
-    /* Deprecated */
-    unsigned int bin_val() {
-      unsigned int value = 0;
-      for(unsigned int i = 0; i < size; i++) {
-        if(number[i]) {
-          value += pow(10, i);
+    Binary operator <<(const unsigned int val) {
+      Binary temp(size);
+      temp = (*this);
+      for(int i = (size - 1); i >= 0; i--) {
+        if (i >= val) {
+          temp.number[i] = temp.number[i - val];
+        } else {
+          temp.number[i] = 0;
         }
       }
-      return value;
-    }
-
-    Binary operator <<(const Binary& val) {
-      Binary temp(val.size);
-      temp = (*this);
-      for(int i = (size - 1); i > 0; i--) {
-        temp.number[i] = temp.number[i - 1];
-      }
-      temp.number[0] = 0;
       return temp;
     }
 
-    Binary operator >>(const Binary& val) {
-      Binary temp(val.size);
+    Binary operator >>(const unsigned int& val) {
+      Binary temp(size);
       temp = (*this);
       for(int i = 0; i < size - 1; i++) {
-        temp.number[i] = temp.number[i + 1];
+        if (i < (size-val)) {
+          temp.number[i] = temp.number[i + val];
+        } else {
+          temp.number[i] = temp.number[i - 1];
+        }
       }
       return temp;
     }
