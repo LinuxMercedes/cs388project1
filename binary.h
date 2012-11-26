@@ -178,6 +178,7 @@ class Binary {
       if(p_b.get_size() > p_q.get_size()) {
         size = p_b.get_size();
         q = Binary(size);
+        q.decimal = p_q.decimal;
         for (int i = 0; i < size; i++){
           if(i < p_q.get_size()){
             q.number[i] = p_q.number[i];
@@ -188,6 +189,7 @@ class Binary {
       }
       if(p_b.get_size() < p_q.get_size()) {
         b = Binary(size);
+        b.decimal = p_b.decimal;
         for (int i = 0; i < size; i++){
           if(i < p_b.get_size()){
             b.number[i] = p_b.number[i];
