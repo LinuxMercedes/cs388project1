@@ -36,58 +36,53 @@ string DIVISORS[8] = {
  */
 void doubleAsBinary(ostream &os, double num)
 {
-	os << "(" << num << ") ";
+  os << "(" << num << ") ";
 
-	int i = 12;
-	while(i != -12)
-	{
-		if(num >= pow(2, i))
-		{
-			os << "1";
-			num -= pow(2, i);
-		}
-		else
-		{
-			os << "0";
-		}
+  int i = 12;
+  while(i != -12)
+  {
+    if(num >= pow(2, i))
+    {
+      os << "1";
+      num -= pow(2, i);
+    }
+    else
+    {
+      os << "0";
+    }
 
-		if(i == 0)
-			os << ".";
+    if(i == 0)
+      os << ".";
 
-		i--;
-	}
+    i--;
+  }
 }
 
+
 int main() {
-
-
-	unsigned int costly = 0;
-	Binary a(32), b(8);
-	a = "00000001010.010010001001001001001000";
-	b = "0001.00111";
-
-
-	cout << a << " resized to size 10: " << a.resize(10) << endl;
-	cout << b << " resized to size 6: " << b.resize(6) << endl;
-	cout << a << " * " << b << " = " << mul(a, b, costly) << endl;
-
   unsigned int cost;
-  for(int i = 0; i < 1; i++) {
+
+  cout << "Dividend: "
+       << "\tDivisor: "
+       << "\tQuotient: " 
+       << "\tCost: " 
+       << "\tCorrect Value: " << endl;
+  
+  for(int i = 0; i < 8; i++) {
     Binary dividend(DIVIDENDS[i].size()-1);
     Binary divisor(DIVISORS[i].size()-1);
+
     dividend = DIVIDENDS[i].c_str();
     divisor = DIVISORS[i].c_str();
-    cost = 0;
-    cout << "Dividend: " << dividend << endl;
-    cout << "Divisor: " << divisor << endl;
-    cout << "Quotient: " << multiplicative_division(dividend, divisor, cost) << endl;
-    cout << "Quotient: " << divisor_reciprocation(dividend, divisor, cost) << endl;
 
-    cout << "Correct Value: ";
+    cost = 0;
+    cout << dividend;
+    cout << "\t" << divisor;
+    cout << "\t" << multiplicative_division(dividend, divisor, cost);
+    cout << "\t" << cost;
+    cout << "\t";
     doubleAsBinary(cout, dividend.toDouble() / divisor.toDouble());
     cout << endl;
-
-    cout << "Cost: " << cost << endl;
   }
 
   return 0;
