@@ -171,8 +171,34 @@ class Binary {
     friend Binary sub(const Binary& lhs, const Binary& rhs, unsigned int& cost) {
       // Take 2's complement and add!
       Binary r = rhs;
+
+      // This is a workaround because add() adjusts the decimal point
+      // in order to avoid dropping the 1.
+      // e.g, for 2 - 0.875:
+      // Add wants to do this: (2) 010.000000 + (3.125) 11.0010000 = (5.125) 101.001000
+      // we *need* to do this: (2) 010.000000 + (3.125) 11.0010000 = (1.125) 01.001000
+      Binary l = lhs;
+
+      // Shift lhs left as much as we can, dropping off LSB's that are 0.
+      while(l.number[l.size - 1] == false)
+      {
+    	  l = l << 1;
+    	  l.decimal++;
+      }
+
+      // Sign-extend rhs as much as we need
+      while(r.number[r.size - 1] == false && r.decimal < l.decimal)
+      {
+    	  r = r << 1;
+    	  r.decimal++;
+      }
+
       r.complement();
-      return add(lhs, r, cost);
+
+
+      Binary result = add(l, r, cost);
+      cout << l << " + " << r << " = " << result << endl;
+      return result;
     }
 
     friend Binary mul(const Binary& p_b, const Binary& p_q, unsigned int& cost) {
@@ -228,13 +254,6 @@ class Binary {
     }
 
     Binary resize(const unsigned int new_size) const {
-//    	if (new_size < size) {
-//    		return truncate_to_size(new_size);
-//    	}
-//    	else {
-//    		return pad_to_size(new_size);
-//    	}
-
         Binary q(new_size);
 
         // copy this->char_val() into a mutable buffer named 'value'
