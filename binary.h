@@ -193,11 +193,20 @@ class Binary {
     	  r.decimal++;
       }
 
+      while(r.decimal > l.decimal)
+      {
+    	  // Losing some data..
+    	  if(r.number[0] == true)
+    		  r.truncate = true;
+
+    	  r = r >> 1;
+    	  r.decimal--;
+      }
+
       r.complement();
 
 
       Binary result = add(l, r, cost);
-      cout << l << " + " << r << " = " << result << endl;
       return result;
     }
 

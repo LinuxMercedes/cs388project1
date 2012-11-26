@@ -72,7 +72,7 @@ int main() {
 	cout << a << " * " << b << " = " << mul(a, b, costly) << endl;
 
   unsigned int cost;
-  for(int i = 0; i < 1; i++) {
+  for(int i = 2; i < 3; i++) {
     Binary dividend(DIVIDENDS[i].size()-1);
     Binary divisor(DIVISORS[i].size()-1);
     dividend = DIVIDENDS[i].c_str();
