@@ -244,6 +244,22 @@ class Binary {
       return q;
     }
 
+    Binary truncate_to_size(const unsigned int new_size) const {
+      if (new_size > size) {
+        throw "new_size must be greater than current size";
+      }
+      if (new_size == size) {
+        return Binary(*this);
+      }
+      Binary q(new_size);
+      int size_diff = size - new_size;
+      for (int i = (new_size - 1); i >= 0; i--){
+          q.number[i] = number[i+size_diff];
+      }
+      q.decimal = decimal - size_diff;
+      return q;
+    }
+
     void complement(unsigned int& cost = ZERO) {
       for(unsigned int i = 0; i < size; i++) {
         number[i] = !number[i];
