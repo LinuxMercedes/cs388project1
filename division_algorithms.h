@@ -66,6 +66,7 @@ Binary divisor_reciprocation(const Binary& a, const Binary& b, unsigned int& cos
 
 		std::cout << "Iteration #" << i + 1 << endl;
 
+		cout << TWO << " - " << a_0 << " = " << sub_x << endl;
 		cout << x_0 << " * " << sub_x << " = " << (x_i = mul(x_0, sub_x, costX)) << endl;
 		cout << a_0 << " * " << sub_a << " = " << (a_i = mul(a_0, sub_a, costA)) << endl;
 		cost = max(costX, costA);
@@ -75,8 +76,8 @@ Binary divisor_reciprocation(const Binary& a, const Binary& b, unsigned int& cos
 		x_i = x_i.resize(size);
 		a_i = a_i.resize(size);
 
-		std::cout << "subx_" << i + 1<< " = " << sub_x << endl;
-		std::cout << "suba_" << i + 1 << " = " << sub_a << endl;
+//		std::cout << "subx_" << i + 1<< " = " << sub_x << endl;
+//		std::cout << "suba_" << i + 1 << " = " << sub_a << endl;
 		std::cout << "x_" << i + 1<< " = " << x_i << endl;
 		std::cout << "a_" << i + 1 << " = " << a_i << endl;
 
