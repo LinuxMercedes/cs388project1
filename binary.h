@@ -117,12 +117,6 @@ class Binary {
       }
     }
 
-    void set_digit(unsigned int loc, bool val) {
-      if(loc < size) {
-        number[loc] = val;
-      }
-    }
-
     unsigned int get_decimal() const {
       return decimal;
     }
