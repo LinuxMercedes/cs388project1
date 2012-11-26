@@ -39,6 +39,7 @@ Binary divisor_reciprocation(const Binary& a, const Binary& b, unsigned int& cos
 //	std::cout << "a: " << a << endl;
 //	std::cout << "b: " << b << endl;
 
+	int size = max(a.get_size(), b.get_size()) * 2;
 	Binary x_0(b.get_size(), b.get_decimal(), 1); // Approximately equal to 1 / B
 
 	std::cout << "x_" << 0 << " = " << x_0 << endl;
@@ -48,13 +49,14 @@ Binary divisor_reciprocation(const Binary& a, const Binary& b, unsigned int& cos
 	std::cout << "a_" << 0 << " = " << a_0 << endl;
 
 	Binary x_i = x_0, a_i = a_0;
-	const Binary TWO(b.get_size(), b.get_decimal(), 2);
+	Binary TWO(size, b.get_decimal());
+	TWO = "010.0";
 
 	std::cout << "Iteration #" << 0 << endl;
 	std::cout << "x_" << 0 << " = " << x_0 << endl;
 	std::cout << "a_" << 0 << " = " << a_0 << endl;
 
-	for(int i = 0; i != 2; i++)
+	for(int i = 0; i != 5; i++)
 	{
 		// Perform the operations in parallel
 		unsigned int costX = cost, costA = cost;
@@ -62,11 +64,17 @@ Binary divisor_reciprocation(const Binary& a, const Binary& b, unsigned int& cos
 		Binary sub_x = sub(TWO, a_0, costX);
 		Binary sub_a = sub(TWO, a_0, costA);
 
+		std::cout << "Iteration #" << i + 1 << endl;
+
 		cout << x_0 << " * " << sub_x << " = " << (x_i = mul(x_0, sub_x, costX)) << endl;
 		cout << a_0 << " * " << sub_a << " = " << (a_i = mul(a_0, sub_a, costA)) << endl;
 		cost = max(costX, costA);
 
-		std::cout << "Iteration #" << i + 1 << endl;
+//		cout << x_i << " to size " << size << " = " << x_i.resize(size) << endl;
+//		cout << a_i << " to size " << size << " = " << a_i.resize(size) << endl;
+		x_i = x_i.resize(size);
+		a_i = a_i.resize(size);
+
 		std::cout << "subx_" << i + 1<< " = " << sub_x << endl;
 		std::cout << "suba_" << i + 1 << " = " << sub_a << endl;
 		std::cout << "x_" << i + 1<< " = " << x_i << endl;

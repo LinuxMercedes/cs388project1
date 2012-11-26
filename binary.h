@@ -227,6 +227,52 @@ class Binary {
       return result;
     }
 
+    Binary resize(const unsigned int new_size) const {
+//    	if (new_size < size) {
+//    		return truncate_to_size(new_size);
+//    	}
+//    	else {
+//    		return pad_to_size(new_size);
+//    	}
+
+        Binary q(new_size);
+
+        // copy this->char_val() into a mutable buffer named 'value'
+        int buf_size = max(size, (int)new_size);
+        char* buffer = new char[buf_size + 1];
+        strncpy(buffer, this->char_val().c_str(), buf_size);
+        buffer[buf_size] = 0;
+
+        char* value = buffer;
+
+        // Trim from the left of the .
+        while(*value != 0 && *value == '0')
+        	value++;
+        if(*(value - 1) == '0') // Pesky sign extension..
+        	value--;
+
+        // Is there a decimal point to worry about?
+        const char* dec = value;
+        while(*dec != '.' && *dec != 0)
+        	dec++;
+
+        // Write null chars from the right to the left
+        // until the length of the buffer equals the new size.
+        char* end = buffer + buf_size;
+        while(end != buffer && (end - value) > new_size + (*dec != 0 ? 1 : 0))
+        {
+        	if(*--end == '.')
+        		cout << "Overflow." << endl;
+        	*end = '\0';
+        }
+
+        q = value;
+
+        delete[] buffer;
+
+        return q;
+    }
+
     Binary pad_to_size(const unsigned int new_size) const {
       if (new_size < size) {
         throw "new_size must be greater than current size";

@@ -62,12 +62,13 @@ int main() {
 
 
 	unsigned int costly = 0;
-	Binary a(4), b(8);
-	a = "00001";
-	b = "00001.0010";
+	Binary a(32), b(8);
+	a = "00000001010.010010001001001001001000";
+	b = "0001.00111";
 
 
-	cout << a << " padded to size 8: " << a.pad_to_size(8) << endl;
+	cout << a << " resized to size 10: " << a.resize(10) << endl;
+	cout << b << " resized to size 6: " << b.resize(6) << endl;
 	cout << a << " * " << b << " = " << mul(a, b, costly) << endl;
 
   unsigned int cost;
