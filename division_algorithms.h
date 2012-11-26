@@ -21,12 +21,7 @@ Binary multiplicative_division(const Binary& a, const Binary& b, unsigned int& c
   Binary b_i = b;
   Binary b_i_complement;
   
-  cout << "b_i == 1 ? " << (b_i == one) << endl;
-  cout << "b_i = " << b_i.char_val() << endl;
-  cout << "one = " << one.char_val() << endl;
-
   for(int i = 0; i < ITERLIMIT && b_i != one; i++) {
-    cout << "**" << a_i.char_val() << endl;
     f_i = b_i;
     f_i.complement();
     a_i = mul(a_i, f_i, cost);
