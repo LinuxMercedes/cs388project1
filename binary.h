@@ -262,24 +262,6 @@ class Binary {
       cost += size;
     }
 
-    /* Deprecated */
-    int int_val() {
-      int value = 0;
-
-      for(unsigned int i = 0; i < size; i++) {
-        if(number[i]) {
-          if(i == size - 1) {
-            value -= pow(2, i);
-          }
-          else {
-            value += pow(2, i);
-          }
-        }
-      }
-
-      return value;
-    }
-
     string char_val() const {
       stringstream str;
       for(int i = size - 1; i >= 0; i--) {
@@ -290,17 +272,6 @@ class Binary {
       }
 
       return str.str();
-    }
-
-    /* Deprecated */
-    unsigned int bin_val() {
-      unsigned int value = 0;
-      for(unsigned int i = 0; i < size; i++) {
-        if(number[i]) {
-          value += pow(10, i);
-        }
-      }
-      return value;
     }
 
     Binary operator <<(const Binary& val) {
