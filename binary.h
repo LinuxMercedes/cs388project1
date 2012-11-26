@@ -290,7 +290,8 @@ class Binary {
         while(end != buffer && (end - value) > new_size + (*dec != 0 ? 1 : 0))
         {
         	if(*--end == '.')
-        		cout << "Overflow." << endl;
+//        		cout << "Overflow." << endl;
+        		return *this;
         	*end = '\0';
         }
 
@@ -547,10 +548,11 @@ class Binary {
     	return value;
     }
 
+    int decimal;
+
   private:
     bool* number;
     int size;
-    int decimal;
 
     bool overflow;
     bool carryin;

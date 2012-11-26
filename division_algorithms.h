@@ -34,10 +34,33 @@ Binary multiplicative_division(const Binary& a, const Binary& b, unsigned int& c
  * @param cost [in/out] Cost to perform operation
  * @return Binary value with the result
  */
-Binary divisor_reciprocation(const Binary& a, const Binary& b, unsigned int& cost) {
+Binary divisor_reciprocation(const Binary& aP, const Binary& bP, unsigned int& cost) {
+
+	Binary a = aP;
+	Binary b = bP;
+
 	if(b.toDouble() < 0.5 || b.toDouble() >= 1)
 	{
-		cout << "WARNING: divisor(B) is " << b << " outside of 1/2 <= B < 1" << endl;
+//		cout << "WARNING: divisor(B) is " << b << " outside of 1/2 <= B < 1" << endl;
+		double bVal = b.toDouble();
+		while(bVal < 0.5)
+		{
+		  b = b << 1;
+		  b.decimal++;
+		  a = a << 1;
+		  a.decimal++;
+		  bVal *= 2;
+		}
+
+		while(bVal >= 1)
+		{
+		  b = b >> 1;
+		  b.decimal--;
+		  a = a >> 1;
+		  a.decimal++;
+		  bVal /= 2;
+
+		}
 	}
 
 	int size = max(a.get_size(), b.get_size());
@@ -57,7 +80,8 @@ Binary divisor_reciprocation(const Binary& a, const Binary& b, unsigned int& cos
 //	std::cout << "x_" << 0 << " = " << x_0 << endl;
 //	std::cout << "a_" << 0 << " = " << a_0 << endl;
 
-	for(int i = 0; i != 5; i++)
+	while(abs(x_i.toDouble() - a.toDouble() / b.toDouble()) >= pow(2, -size + 3) &&
+			x_i.get_size() <= size) // Division overflow
 	{
 		// Perform the operations in parallel
 		unsigned int costX = cost, costA = cost;
@@ -68,8 +92,10 @@ Binary divisor_reciprocation(const Binary& a, const Binary& b, unsigned int& cos
 //		std::cout << "Iteration #" << i + 1 << endl;
 //
 //		cout << TWO << " - " << a_0 << " = " << sub_x << endl;
-//		cout << x_0 << " * " << sub_x << " = " << (x_i = mul(x_0, sub_x, costX)) << endl;
-//		cout << a_0 << " * " << sub_a << " = " << (a_i = mul(a_0, sub_a, costA)) << endl;
+		x_i = mul(x_0, sub_x, costX);
+//		cout << x_0 << " * " << sub_x << " = " << (x_i) << endl;
+		a_i = mul(a_0, sub_a, costA);
+//		cout << a_0 << " * " << sub_a << " = " << (a_i) << endl;
 		cost = max(costX, costA);
 
 		x_i = x_i.resize(size);
