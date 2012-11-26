@@ -61,33 +61,41 @@ void doubleAsBinary(ostream &os, double num)
 int main() {
 
 
-	unsigned int costly = 0;
-	Binary a(32), b(8);
-	a = "00000001010.010010001001001001001000";
-	b = "0001.00111";
-
-
-	cout << a << " resized to size 10: " << a.resize(10) << endl;
-	cout << b << " resized to size 6: " << b.resize(6) << endl;
-	cout << a << " * " << b << " = " << mul(a, b, costly) << endl;
+	cout << "Dividend\tDivisor\tMultiplicative Division Quotient\tCost\tDivisor Reciprocation Quotient\tCost\tCorrect Value" << endl;
 
   unsigned int cost;
-  for(int i = 2; i < 3; i++) {
+  for(int i = 0; i < sizeof(DIVIDENDS) / sizeof(DIVIDENDS[0]); i++) {
     Binary dividend(DIVIDENDS[i].size()-1);
     Binary divisor(DIVISORS[i].size()-1);
     dividend = DIVIDENDS[i].c_str();
     divisor = DIVISORS[i].c_str();
     cost = 0;
-    cout << "Dividend: " << dividend << endl;
-    cout << "Divisor: " << divisor << endl;
-    cout << "Quotient: " << multiplicative_division(dividend, divisor, cost) << endl;
-    cout << "Quotient: " << divisor_reciprocation(dividend, divisor, cost) << endl;
 
-    cout << "Correct Value: ";
-    doubleAsBinary(cout, dividend.toDouble() / divisor.toDouble());
-    cout << endl;
+    cout << dividend << "\t";
+    cout << divisor << "\t";
+    cout << dividend << "\t";
+    cout << multiplicative_division(dividend, divisor, cost) << "\t";
+    cout << cost << "\t";
+    cost = 0;
 
-    cout << "Cost: " << cost << endl;
+    cout << divisor_reciprocation(dividend, divisor, cost) << "\t";
+	cout << cost << "\t";
+	cost = 0;
+
+	doubleAsBinary(cout, dividend.toDouble() / divisor.toDouble());
+	cout << "\t" << endl;
+
+
+//    cout << "Dividend: " << dividend << endl;
+//    cout << "Divisor: " << divisor << endl;
+//    cout << "Quotient: " << multiplicative_division(dividend, divisor, cost) << endl;
+//    cout << "Quotient: " << divisor_reciprocation(dividend, divisor, cost) << endl;
+//
+//    cout << "Correct Value: ";
+//    doubleAsBinary(cout, dividend.toDouble() / divisor.toDouble());
+//    cout << endl;
+//
+//    cout << "Cost: " << cost << endl;
   }
 
   return 0;
