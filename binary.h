@@ -274,21 +274,28 @@ class Binary {
       return str.str();
     }
 
-    Binary operator <<(const Binary& val) {
-      Binary temp(val.size);
+    Binary operator <<(const unsigned int val) {
+      Binary temp(size);
       temp = (*this);
-      for(int i = (size - 1); i > 0; i--) {
-        temp.number[i] = temp.number[i - 1];
+      for(int i = (size - 1); i >= 0; i--) {
+        if (i >= val) {
+          temp.number[i] = temp.number[i - val];
+        } else {
+          temp.number[i] = 0;
+        }
       }
-      temp.number[0] = 0;
       return temp;
     }
 
-    Binary operator >>(const Binary& val) {
-      Binary temp(val.size);
+    Binary operator >>(const unsigned int& val) {
+      Binary temp(size);
       temp = (*this);
       for(int i = 0; i < size - 1; i++) {
-        temp.number[i] = temp.number[i + 1];
+        if (i < (size-val)) {
+          temp.number[i] = temp.number[i + val];
+        } else {
+          temp.number[i] = temp.number[i - 1];
+        }
       }
       return temp;
     }
