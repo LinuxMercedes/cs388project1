@@ -15,9 +15,9 @@ int main() {
   Binary c = sub(a, b, cost);
 //  b.complement();
 
-  cout << a.char_val() << endl;
-  cout << b.char_val() << endl;
-  cout << c.char_val() << endl;
+  cout << a << endl;
+  cout << b << endl;
+  cout << c << endl;
   cout << (a == b) << endl;
 
   cout << mul(a, b, cost).char_val() << endl;

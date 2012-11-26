@@ -41,12 +41,32 @@ class Binary {
       size = sz;
       decimal = dec;
       number = new bool[size];
+
+      carryin = false;
+      overflow = false;
+      truncate = false;
+    }
+
+    Binary(unsigned int sz, unsigned int dec, int value) {
+      size = sz;
+      decimal = dec;
+      number = new bool[size];
+
+      carryin = false;
+      overflow = false;
+      truncate = false;
+
+      *this = value;
     }
 
     Binary() {
       size = 0;
       decimal = 0;
       number = NULL;
+
+      carryin = false;
+      overflow = false;
+      truncate = false;
     }
 
     Binary(const Binary& val) {
@@ -97,7 +117,13 @@ class Binary {
       }
     }
 
-    unsigned int get_decimal() {
+    void set_digit(unsigned int loc, bool val) {
+      if(loc < size) {
+        number[loc] = val;
+      }
+    }
+
+    unsigned int get_decimal() const {
       return decimal;
     }
 
@@ -270,7 +296,7 @@ class Binary {
       return value;
     }
 
-    string char_val() {
+    string char_val() const {
       stringstream str;
       for(int i = size - 1; i >= 0; i--) {
         if(decimal == i + 1) {
@@ -390,6 +416,8 @@ class Binary {
         val *= -1;
       }
 
+      val <<= decimal;
+
       for(int i = size - 1; i >= 0; i--) {
         if(val - pow(2, i) >= 0) {
           number[i] = 1;
@@ -440,7 +468,7 @@ class Binary {
       }
 
       //Sign extend number stored
-      for(i; i < size; i++) {
+      for(; i < size; i++) {
         number[i] = (val[0] == '1');
       }
 
@@ -457,5 +485,13 @@ class Binary {
     bool truncate;
 
 };
+
+/*
+ * ostream insertion operator for the binary type
+ */
+ostream& operator <<(ostream &os, const Binary &num)
+{
+	return os << num.char_val();
+}
 
 #endif
