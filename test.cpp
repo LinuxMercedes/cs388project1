@@ -1,13 +1,13 @@
 #include "binary.h"
 #include "division_algorithms.h"
 #include <iostream>
+#include <sstream>
+#include <string>
 
 using namespace std;
 
-struct BinaryPair {
-  Binary dividend;
-  Binary divisor;
-};
+const bool DELIMITED = true;
+const char DELIM = ';';
 
 string DIVIDENDS[8] = {
   "0.11011110", // .DE
@@ -32,72 +32,70 @@ string DIVISORS[8] = {
 };
 
 /*
- * write double to binary to os
+ * Return a binary representation of num as a string
  */
-void doubleAsBinary(ostream &os, double num)
+string doubleAsBinary(double num)
 {
-	os << "(" << num << ") ";
+  stringstream os;
+  os << "(" << num << ") ";
 
-	int i = 12;
-	while(i != -12)
-	{
-		if(num >= pow(2, i))
-		{
-			os << "1";
-			num -= pow(2, i);
-		}
-		else
-		{
-			os << "0";
-		}
+  int i = 12;
+  while(i != -12)
+  {
+    if(num >= pow(2, i))
+    {
+      os << "1";
+      num -= pow(2, i);
+    }
+    else
+    {
+      os << "0";
+    }
 
-		if(i == 0)
-			os << ".";
+    if(i == 0)
+      os << ".";
 
-		i--;
-	}
+    i--;
+  }
+  return os.str();
 }
 
 int main() {
+  
+  cout << "Dividend" << DELIM << "Divisor" << DELIM
+       << "Multiplicative Division Quotient" << DELIM << "Cost" << DELIM 
+       << "Divisor Reciprocation Quotient" << DELIM << "Cost" << DELIM
+       << "Correct Value" << endl;
 
-	const char DELIM = ';';
-
-	cout << "Dividend" << DELIM << "Divisor" << DELIM << "Multiplicative Division Quotient" << DELIM
-			<< "Cost" << DELIM << "Divisor Reciprocation Quotient" << DELIM << "Cost" << DELIM << "Correct Value" << endl;
-
-  unsigned int cost;
   for(int i = 0; i < sizeof(DIVIDENDS) / sizeof(DIVIDENDS[0]); i++) {
     Binary dividend(DIVIDENDS[i].size()-1);
     Binary divisor(DIVISORS[i].size()-1);
+    Binary md_result;
+    Binary dr_result;
+
+    unsigned int md_cost = 0;
+    unsigned int dr_cost = 0;
+
     dividend = DIVIDENDS[i].c_str();
     divisor = DIVISORS[i].c_str();
-    cost = 0;
 
-    cout << dividend << DELIM;
-    cout << divisor << DELIM;
-    cout << dividend << DELIM;
-    cout << multiplicative_division(dividend, divisor, cost) << DELIM;
-    cout << cost << DELIM;
-    cost = 0;
+    md_result = multiplicative_division(dividend, divisor, md_cost);
+    dr_result = divisor_reciprocation(dividend, divisor, dr_cost);
+    if (DELIMITED){
+      cout << dividend << DELIM << divisor << DELIM 
+           << md_result << DELIM << md_cost << DELIM
+           << dr_result << DELIM << dr_cost << DELIM 
+           << doubleAsBinary(dividend.toDouble() / divisor.toDouble())
+           << endl;
+    } else {
+      cout << "Dividend: " << dividend << endl
+           << "Divisor: " << divisor << endl
+           << "MD Quotient: " << md_result << "  Cost: " << md_cost << endl
+           << "DR Quotient: " << dr_result << "  Cost: " << dr_cost << endl
+           << "Actual Value: " << doubleAsBinary(dividend.toDouble() / divisor.toDouble())
+           << endl << endl;
+    }
 
-    cout << divisor_reciprocation(dividend, divisor, cost) << DELIM;
-	cout << cost << DELIM;
-	cost = 0;
-
-	doubleAsBinary(cout, dividend.toDouble() / divisor.toDouble());
-	cout << DELIM << endl;
-
-
-//    cout << "Dividend: " << dividend << endl;
-//    cout << "Divisor: " << divisor << endl;
-//    cout << "Quotient: " << multiplicative_division(dividend, divisor, cost) << endl;
-//    cout << "Quotient: " << divisor_reciprocation(dividend, divisor, cost) << endl;
-//
-//    cout << "Correct Value: ";
-//    doubleAsBinary(cout, dividend.toDouble() / divisor.toDouble());
-//    cout << endl;
-//
-//    cout << "Cost: " << cost << endl;
   }
 
   return 0;
