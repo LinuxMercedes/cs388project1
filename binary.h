@@ -258,7 +258,7 @@ class Binary {
       delete[] matrix_of_summands;
       delete[] results;
 
-      cost = 1 + (floor_log2 * 4) + (2 * size - 1) * 4;
+      cost += 1 + (floor_log2 * 4) + (2 * size - 1) * 4;
       return result;
     }
 
