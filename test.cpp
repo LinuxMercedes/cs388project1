@@ -6,7 +6,7 @@
 
 using namespace std;
 
-const bool DELIMITED = true;
+const bool DELIMITED = false;
 const char DELIM = ';';
 
 string DIVIDENDS[8] = {
