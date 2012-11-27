@@ -11,8 +11,6 @@ static unsigned int ZERO = 0; // Only use for optional pass-by-reference paramet
 
 using namespace std;
 
-class Binary;
-ostream& operator <<(ostream &os, const Binary &num);
 
 bool full_add(const bool lhs, const bool rhs, bool& carry) {
   bool ret;
@@ -87,8 +85,9 @@ class Binary {
     }
 
     ~Binary() {
-      if(number != NULL)
+      if(number != NULL) {
         delete [] number;
+      }
     }
 
     bool has_overflow() {
@@ -182,34 +181,35 @@ class Binary {
       // Shift lhs left as much as we can, dropping off LSB's that are 0.
       while(l.number[l.size - 1] == false)
       {
-    	  l = l << 1;
-    	  l.decimal++;
+        l = l << 1;
+        l.decimal++;
       }
 
       // Sign-extend rhs as much as we need
       while(r.number[r.size - 1] == false && r.decimal < l.decimal)
       {
-    	  r = r << 1;
-    	  r.decimal++;
+        r = r << 1;
+        r.decimal++;
       }
-
+      
       while(r.decimal > l.decimal)
       {
-    	  // Losing some data..
-    	  if(r.number[0] == true)
-    		  r.truncate = true;
-
-    	  r = r >> 1;
-    	  r.decimal--;
+        // Losing some data..
+        if(r.number[0] == true)
+          r.truncate = true;
+        
+        r = r >> 1;
+        r.decimal--;
       }
-
+      
       r.complement(cost);
-
-
+      
+      
       Binary result = add(l, r, cost);
       return result;
     }
-
+  
+    // Performs fast multiplication using a fast adder tree strategy
     friend Binary mul(const Binary& p_b, const Binary& p_q, unsigned int& cost) {
       Binary b = p_b, q = p_q;
       int size = p_q.get_size();
@@ -221,7 +221,7 @@ class Binary {
         b = p_b.pad_to_size(size);
       }
       int floor_log2 = static_cast<int>(floor(log(size)/log(2)));
-
+      
       // build matrix of summands
       Binary *matrix_of_summands = new Binary[size];
       for(int i = 0; i < size; i++) {
@@ -242,9 +242,9 @@ class Binary {
 
       int results_size = size;
       while(results_size > 1){
-        int i, next = 0;
+        unsigned int i, next = 0, unused_cost;
         for(i = 0; i < results_size/2; i++, next+=2) {
-          results[i] = add(results[next], results[next + 1], cost);
+          results[i] = add(results[next], results[next + 1], unused_cost);
         }
         if (results_size % 2) {
           results[i] = results[results_size-1];
@@ -254,54 +254,54 @@ class Binary {
 
       Binary result = results[0];
       result.decimal = b.decimal + q.decimal;
-
+      
       delete[] matrix_of_summands;
       delete[] results;
-
+      
+      // According to full adder tree formula
       cost += 1 + (floor_log2 * 4) + (2 * size - 1) * 4;
       return result;
     }
 
     Binary resize(const unsigned int new_size) const {
-        Binary q(new_size);
-
-        // copy this->char_val() into a mutable buffer named 'value'
-        int buf_size = max(size, (int)new_size);
-        char* buffer = new char[buf_size + 1];
-        strncpy(buffer, this->char_val().c_str(), buf_size);
-        buffer[buf_size] = 0;
-
-        char* value = buffer;
-
-        // Trim from the left of the .
-        while(*value != 0 && *value == '0')
-        	value++;
-        if(*(value - 1) == '0') // Pesky sign extension..
-        	value--;
-
-        // Is there a decimal point to worry about?
-        const char* dec = value;
-        while(*dec != '.' && *dec != 0)
-        	dec++;
-
-        // Write null chars from the right to the left
-        // until the length of the buffer equals the new size.
-        char* end = buffer + buf_size;
-        while(end != buffer && (end - value) > new_size + (*dec != 0 ? 1 : 0))
-        {
-        	if(*--end == '.')
-//        		cout << "Overflow." << endl;
-        		return *this;
-        	*end = '\0';
-        }
-
-        q = value;
-
-        delete[] buffer;
-
-        return q;
+      Binary q(new_size);
+      
+      // copy this->char_val() into a mutable buffer named 'value'
+      int buf_size = max(size, (int)new_size);
+      char* buffer = new char[buf_size + 1];
+      strncpy(buffer, this->char_val().c_str(), buf_size);
+      buffer[buf_size] = 0;
+      
+      char* value = buffer;
+      
+      // Trim from the left of the .
+      while(*value != 0 && *value == '0')
+        value++;
+      if(*(value - 1) == '0') // Pesky sign extension..
+        value--;
+      
+      // Is there a decimal point to worry about?
+      const char* dec = value;
+      while(*dec != '.' && *dec != 0)
+        dec++;
+      
+      // Write null chars from the right to the left
+      // until the length of the buffer equals the new size.
+      char* end = buffer + buf_size;
+      while(end != buffer && (end - value) > new_size + (*dec != 0 ? 1 : 0))
+      {
+        if(*--end == '.')
+          return *this;
+        *end = '\0';
+      }
+      
+      q = value;
+      
+      delete[] buffer;
+      
+      return q;
     }
-
+  
     Binary pad_to_size(const unsigned int new_size) const {
       if (new_size < size) {
         throw "new_size must be greater than current size";
@@ -319,10 +319,10 @@ class Binary {
         }
       }
       q.decimal = decimal + size_diff;
-
+      
       return q;
     }
-
+  
     Binary truncate_to_size(const unsigned int new_size) const {
       if (new_size > size) {
         throw "new_size must be smaller than current size";
@@ -333,17 +333,17 @@ class Binary {
       Binary q(new_size);
       int size_diff = size - new_size;
       for (int i = (new_size - 1); i >= 0; i--){
-          q.number[i] = number[i+size_diff];
+        q.number[i] = number[i+size_diff];
       }
       q.decimal = decimal - size_diff;
       return q;
     }
-
+  
     void complement(unsigned int& cost = ZERO) {
       for(unsigned int i = 0; i < size; i++) {
         number[i] = !number[i];
       }
-
+      
       // Add one, but quickly
       unsigned int i;
       for(i = 0; i < size && number[i] != 0; i++) {
@@ -365,7 +365,7 @@ class Binary {
         }
         str << number[i];
       }
-
+      
       return str.str();
     }
 
@@ -441,7 +441,7 @@ class Binary {
     bool operator!= (const Binary& val) {
       return !((*this) == val);
     }
-
+  
     Binary& operator= (const Binary& val) {
       if(size != val.size) {
         if(number != NULL) {
@@ -450,7 +450,7 @@ class Binary {
         number = new bool[val.size];
         size = val.size;
       }
-
+      
       decimal = val.decimal;
       overflow = val.overflow;
       carryin = val.carryin;
@@ -535,17 +535,14 @@ class Binary {
     /**
      * Converts this number to a double
      */
-    double toDouble() const
-    {
-    	double value = 0;
-    	for(int i = 0; i != size; i++)
-		{
-			if(number[i])
-			{
-				value += pow(2, i - (decimal));
-			}
-		}
-    	return value;
+    double toDouble() const {
+      double value = 0;
+      for(int i = 0; i != size; i++) {
+        if(number[i]) {
+          value += pow(2, i - (decimal));
+        }
+      }
+      return value;
     }
 
     int decimal;
@@ -563,9 +560,8 @@ class Binary {
 /*
  * ostream insertion operator for the binary type
  */
-ostream& operator <<(ostream &os, const Binary &num)
-{
-	return os << "(" << num.toDouble() << ") " << num.char_val();
+ostream& operator <<(ostream &os, const Binary &num) {
+    return os << "(" << num.toDouble() << ") " << num.char_val();
 }
 
 #endif
