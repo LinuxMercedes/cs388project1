@@ -203,7 +203,7 @@ class Binary {
     	  r.decimal--;
       }
 
-      r.complement();
+      r.complement(cost);
 
 
       Binary result = add(l, r, cost);
