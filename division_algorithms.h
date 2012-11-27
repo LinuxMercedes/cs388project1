@@ -16,14 +16,23 @@ Binary multiplicative_division(const Binary& a, const Binary& b, unsigned int& c
   Binary f_i = one;
   Binary a_i = a;
   Binary b_i = b;
-  
-  for(int i = 0; i < ITERLIMIT && b_i != one; i++) {
-    a_i = mul(a_i, f_i, cost).truncate_to_size(size);
-    b_i = mul(b_i, f_i, cost).truncate_to_size(size);
-    f_i = b_i;
-    f_i.complement();
-  }
 
+  unsigned int cost_a_i, cost_b_i;
+  for(int i = 0; i < ITERLIMIT && b_i != one; i++) {
+    cost_a_i = 0;
+    cost_b_i = 0;
+
+    a_i = mul(a_i, f_i, cost_a_i).truncate_to_size(size);
+    b_i = mul(b_i, f_i, cost_b_i).truncate_to_size(size);
+
+    // Assume multiplications can be done in parallel, then cost is the more 
+    // expensive of the two multiplications.
+    cost += max(cost_a_i, cost_b_i);
+
+    f_i = b_i;
+    f_i.complement(cost);
+  }
+  
   return a_i;
 }
 
