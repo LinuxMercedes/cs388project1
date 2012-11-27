@@ -12,6 +12,13 @@ static unsigned int ZERO = 0; // Only use for optional pass-by-reference paramet
 using namespace std;
 
 
+/**
+ * Full adder
+ * @param lhs [in] Left hand side
+ * @param rhs [in] Right hand side
+ * @param carry [in/out] Carry bit
+ * @return Binary value with the result
+ */
 bool full_add(const bool lhs, const bool rhs, bool& carry) {
   bool ret;
   if(lhs) {
@@ -36,8 +43,19 @@ bool full_add(const bool lhs, const bool rhs, bool& carry) {
   return ret;
 }
 
+
+/**
+ * Binary
+ * @desc Represents a binary floating point number
+ */
 class Binary {
   public:
+
+    /**
+     * Binary Constructor
+     * @param sz [in] number of bits in the number
+     * @param dec [in] decimal position (defaults to 0)
+     */
     Binary(unsigned int sz, unsigned int dec = 0) {
       size = sz;
       decimal = dec;
@@ -48,6 +66,12 @@ class Binary {
       truncate = false;
     }
 
+    /**
+     * Binary Constructor
+     * @param sz [in] number of bits in the number
+     * @param dec [in] decimal position (defaults to 0)
+     * @param value [in] integer value to assign to the new Binary
+     */
     Binary(unsigned int sz, unsigned int dec, int value) {
       size = sz;
       decimal = dec;
@@ -60,6 +84,10 @@ class Binary {
       *this = value;
     }
 
+    /**
+     * Binary Default Constructor
+     * @desc Creates a binary of size zero
+     */
     Binary() {
       size = 0;
       decimal = 0;
@@ -70,6 +98,10 @@ class Binary {
       truncate = false;
     }
 
+    /**
+     * Binary Copy Constructor
+     * @param val [in] the Binary to copy
+     */
     Binary(const Binary& val) {
       number = new bool[val.size];
       size = val.size;
@@ -84,45 +116,88 @@ class Binary {
       }
     }
 
+    /**
+     * Binary Destructor
+     * @desc Deallocates resources used by the Binary
+     *       (Don't call this explicitly.)
+     */
     ~Binary() {
       if(number != NULL) {
         delete [] number;
       }
     }
 
+    /**
+     * has_overflow()
+     * @return true if overflow, else false
+     */
     bool has_overflow() {
       return overflow;
     }
 
+    /**
+     * has_carryin()
+     * @return true if carryin, else false
+     */
     bool has_carryin() {
       return carryin;
     }
 
+    /**
+     * has_truncate()
+     * @return true if truncate, else false
+     */
     bool has_truncate() {
       return truncate;
     }
 
+    /**
+     * get_size()
+     * @return returns the number of bits allocated to this Binary
+     */
     unsigned int get_size() const {
       return size;
     }
 
-    // Set with the number of digits to the right of the decimal point
+    /**
+     * get_decimal()
+     * @return returns the decimal position of the Binary
+     */
+    unsigned int get_decimal() const {
+      return decimal;
+    }
+
+    /**
+     * set_decimal()
+     * @param loc [in] the new position of the decimal
+     * @desc Set with the number of digits to the right of the decimal point
+     */
     void set_decimal(unsigned int loc) {
       if(loc < size) {
         decimal = loc;
       }
     }
 
+    /**
+     * set_digit()
+     * @param loc [in] the position to change
+     * @param val [in] the value of the bit at position loc
+     * @desc Set the bit at position "loc" to "val"
+     */
     void set_digit(unsigned int loc, bool val) {
       if(loc < size) {
         number[loc] = val;
       }
     }
 
-    unsigned int get_decimal() const {
-      return decimal;
-    }
-
+    /**
+     * add()
+     * @desc Simulates fast addition using carry lookahead 2 scheme
+     * @param lhs [in] the left hand side
+     * @param rhs [in] the right hand side
+     * @param cost [in/out] Cost to perform operation
+     * @return Binary value with the result
+     */
     friend Binary add(const Binary& lhs, const Binary& rhs, unsigned int& cost) {
       bool carry = false;
       unsigned int sz = max(lhs.size, rhs.size);
@@ -167,6 +242,14 @@ class Binary {
       return result;
     }
 
+    /**
+     * sub()
+     * @desc Simulates subtraction
+     * @param lhs [in] the left hand side
+     * @param rhs [in] the right hand side
+     * @param cost [in/out] Cost to perform operation
+     * @return Binary value with the result
+     */
     friend Binary sub(const Binary& lhs, const Binary& rhs, unsigned int& cost) {
       // Take 2's complement and add!
       Binary r = rhs;
@@ -191,25 +274,32 @@ class Binary {
         r = r << 1;
         r.decimal++;
       }
-      
+
       while(r.decimal > l.decimal)
       {
         // Losing some data..
         if(r.number[0] == true)
           r.truncate = true;
-        
+
         r = r >> 1;
         r.decimal--;
       }
-      
+
       r.complement(cost);
-      
-      
+
+
       Binary result = add(l, r, cost);
       return result;
     }
-  
-    // Performs fast multiplication using a fast adder tree strategy
+
+    /**
+     * mul()
+     * @desc Simulates fast multiplication using full adder tree
+     * @param p_b [in] the left hand side
+     * @param p_q [in] the right hand side
+     * @param cost [in/out] Cost to perform operation
+     * @return Binary value with the result
+     */
     friend Binary mul(const Binary& p_b, const Binary& p_q, unsigned int& cost) {
       Binary b = p_b, q = p_q;
       int size = p_q.get_size();
@@ -221,7 +311,7 @@ class Binary {
         b = p_b.pad_to_size(size);
       }
       int floor_log2 = static_cast<int>(floor(log(size)/log(2)));
-      
+
       // build matrix of summands
       Binary *matrix_of_summands = new Binary[size];
       for(int i = 0; i < size; i++) {
@@ -254,37 +344,43 @@ class Binary {
 
       Binary result = results[0];
       result.decimal = b.decimal + q.decimal;
-      
+
       delete[] matrix_of_summands;
       delete[] results;
-      
+
       // According to full adder tree formula
       cost += 1 + (floor_log2 * 4) + (2 * size - 1) * 4;
       return result;
     }
 
+    /**
+     * resize()
+     * @desc Changes Binary's size and fixes padding
+     * @param new_size [in] the new size for the Binary
+     * @return a new Binary with size new_size
+     */
     Binary resize(const unsigned int new_size) const {
       Binary q(new_size);
-      
+
       // copy this->char_val() into a mutable buffer named 'value'
       int buf_size = max(size, (int)new_size);
       char* buffer = new char[buf_size + 1];
       strncpy(buffer, this->char_val().c_str(), buf_size);
       buffer[buf_size] = 0;
-      
+
       char* value = buffer;
-      
+
       // Trim from the left of the .
       while(*value != 0 && *value == '0')
         value++;
       if(*(value - 1) == '0') // Pesky sign extension..
         value--;
-      
+
       // Is there a decimal point to worry about?
       const char* dec = value;
       while(*dec != '.' && *dec != 0)
         dec++;
-      
+
       // Write null chars from the right to the left
       // until the length of the buffer equals the new size.
       char* end = buffer + buf_size;
@@ -294,14 +390,20 @@ class Binary {
           return *this;
         *end = '\0';
       }
-      
+
       q = value;
-      
+
       delete[] buffer;
-      
+
       return q;
     }
-  
+
+    /**
+     * pad_to_size()
+     * @desc Adds 0's to the right of a decimal Binary
+     * @param new_size [in] desired size
+     * @return Binary of size new_size, with extra padding on the right
+     */
     Binary pad_to_size(const unsigned int new_size) const {
       if (new_size < size) {
         throw "new_size must be greater than current size";
@@ -319,10 +421,16 @@ class Binary {
         }
       }
       q.decimal = decimal + size_diff;
-      
+
       return q;
     }
-  
+
+    /**
+     * truncate_to_size()
+     * @desc Removes digits from the less significant side of a number
+     * @param new_size [in] desired size
+     * @return Binary truncated to size new_size
+     */
     Binary truncate_to_size(const unsigned int new_size) const {
       if (new_size > size) {
         throw "new_size must be smaller than current size";
@@ -338,12 +446,17 @@ class Binary {
       q.decimal = decimal - size_diff;
       return q;
     }
-  
+
+    /**
+     * complement()
+     * @desc Performs 2's complement of a number in place
+     * @param cost [in/out] cost to perform complement
+     */
     void complement(unsigned int& cost = ZERO) {
       for(unsigned int i = 0; i < size; i++) {
         number[i] = !number[i];
       }
-      
+
       // Add one, but quickly
       unsigned int i;
       for(i = 0; i < size && number[i] != 0; i++) {
@@ -357,6 +470,10 @@ class Binary {
       cost += size;
     }
 
+    /**
+     * char_val()
+     * @return a string representation of the Binary
+     */
     string char_val() const {
       stringstream str;
       for(int i = size - 1; i >= 0; i--) {
@@ -365,10 +482,16 @@ class Binary {
         }
         str << number[i];
       }
-      
+
       return str.str();
     }
 
+    /**
+     * operator <<
+     * @desc Shifts digits in a Binary to the left WITHOUT moving the decimal.
+     * @param val [in] number of places to shift
+     * @return a shifted version of the Binary
+     */
     Binary operator <<(const unsigned int val) {
       Binary temp(size);
       temp = (*this);
@@ -382,6 +505,12 @@ class Binary {
       return temp;
     }
 
+    /**
+     * operator >>
+     * @desc Shifts digits in a Binary to the rightWITHOUT moving the decimal.
+     * @param val [in] number of places to shift
+     * @return a shifted version of the Binary
+     */
     Binary operator >>(const unsigned int& val) {
       Binary temp(size);
       temp = (*this);
@@ -395,9 +524,13 @@ class Binary {
       return temp;
     }
 
+    /**
+     * operator ==
+     * @return true if *this == val, else false.
+     */
     bool operator== (const Binary& val) {
       int i = 0, j = 0;
-      
+
       //Account for zeros on the right of the number
       if(decimal < val.decimal) {
         while(j < val.decimal - decimal) {
@@ -422,7 +555,7 @@ class Binary {
         i++;
         j++;
       }
-      
+
       // Check for excess padding
       while(i < size) {
         if(number[i++] != number[size - 1]) {
@@ -438,10 +571,18 @@ class Binary {
       return true;
     }
 
+    /**
+     * operator !=
+     * @return true if *this != val, else false.
+     */
     bool operator!= (const Binary& val) {
       return !((*this) == val);
     }
-  
+
+    /**
+     * operator =
+     * @desc allows assignment of a Binary to a Binary
+     */
     Binary& operator= (const Binary& val) {
       if(size != val.size) {
         if(number != NULL) {
@@ -450,7 +591,7 @@ class Binary {
         number = new bool[val.size];
         size = val.size;
       }
-      
+
       decimal = val.decimal;
       overflow = val.overflow;
       carryin = val.carryin;
@@ -464,7 +605,11 @@ class Binary {
       return *this;
     }
 
-    /* Assign from an integer */
+    /**
+     * operator =
+     * @param val [in] integer value to assign to Binary
+     * @desc allows assignment an integer to a binary
+     */
     Binary& operator= (int val) {
       bool cpl = (val < 0);
       decimal = 0;
@@ -492,11 +637,13 @@ class Binary {
       return *this;
     }
 
-    /*
-     * Assign from a character array of binary digits
-     * Note: indexing on the string is reversed so that it works
-     * the way most people expect it to.
-    */
+    /**
+     * operator =
+     * @param val [in] integer value to assign to Binary
+     * @desc Assign from a character array of binary digits
+     *       Note: indexing on the string is reversed so that it works
+     *       the way most people expect it to.
+     */
     Binary& operator= (const char* val) {
       unsigned int i, j;
       bool decset = false;
@@ -533,7 +680,8 @@ class Binary {
     }
 
     /**
-     * Converts this number to a double
+     * toDouble()
+     * @return double value of calling Binary
      */
     double toDouble() const {
       double value = 0;
@@ -545,15 +693,15 @@ class Binary {
       return value;
     }
 
-    int decimal;
+    int decimal;                // Decimal position
 
   private:
-    bool* number;
-    int size;
+    bool* number;               // Array of booleans to store number
+    int size;                   // Number of bits in boolean array
 
-    bool overflow;
-    bool carryin;
-    bool truncate;
+    bool overflow;              // Whether Binary had overflow
+    bool carryin;               // Whether carry occurred
+    bool truncate;              // Whether Binary was truncated
 
 };
 
